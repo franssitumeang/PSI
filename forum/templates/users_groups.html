@@ -1,0 +1,252 @@
+{% extends 'Layout.html' %}
+{% block title %}
+Users Groups | Forum Mahasiswa
+{% endblock %}
+
+{% block content %}
+{% load staticfiles %}
+<div class="ui main container">
+    <h2 class="title-kategori">USERS & GROUPS</h2>
+    <div class="ui top attached tabular menu">
+        <a class="active item" data-tab="users">Users</a>
+        <a class="item" data-tab="groups">Groups</a>
+    </div>
+    <div class="ui bottom attached active tab segment" data-tab="users">
+        <div class="ui icon input">
+            <input class="prompt" placeholder="Search user..." type="search" id="search_user">
+            <i class="search icon"></i>
+        </div>
+        <br><br>
+        <div class="ui grid" id="data_users">
+            {% for c_user in content_user %}
+            <div class="four wide column">
+                <div class="ui grid ui stacked segment">
+                    <div class="five wide column ">
+                        <img class="ui avatar image" src="/static/images/avatar_user/{{c_user.user.avatar_user}}"
+                             style="border-radius: 2px !important; width:50px !important; height:50px !important;">
+                    </div>
+                    <div class="eleven wide column">
+                        <a href="/forum/user/view/{{c_user.user.email}}" style="font-family: 'Exo', sans-serif;">{{c_user.user.full_name | truncatechars:17}}<br></a>
+                        <span class="post">{{c_user.user.jurusan | truncatechars:23}}<br>{{c_user.user.jumlah_topik_user}} post</span><br>
+                        {% if c_user.self != "self"%}
+                        {% if c_user.is_subscribe %}
+                        <button class="ui red label" id="a_unsubs_{{c_user.user.email | cut:'@' | cut:'.'}}">
+                            Unsubscribe
+                        </button>
+                        <button class="ui teal label" id="a_subs_{{c_user.user.email | cut:'@' | cut:'.'}}"
+                                style="display:none;">Subscribe
+                        </button>
+                        {% else %}
+                        <button class="ui teal label" id="b_subs_{{c_user.user.email | cut:'@' | cut:'.'}}">Subscribe
+                        </button>
+                        <button class="ui red label" id="b_unsubs_{{c_user.user.email | cut:'@' | cut:'.'}}"
+                                style="display:none;">Unsubscribe
+                        </button>
+                        {% endif %}
+                        {% else %}
+                        <a class="ui grey label" href="/forum/user/edit/profile">Edit Profile</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="ui bottom attached tab segment" data-tab="groups">
+        <div class="ui icon input">
+            <input class="prompt" placeholder="Search group..." type="search" id="search_group">
+            <i class="search icon"></i>
+        </div>
+        <a class="ui button green right floated labeled icon" data-tooltip="Create Group"
+           href="/forum/group/create_new"><i
+                class="users icon"></i>New Group</a>
+        <br><br>
+        <div class="ui grid" id="data_groups">
+            {% for c_grup in content_group %}
+            <div class="four wide column">
+                <div class="ui grid ui stacked segment">
+                    <div class="five wide column ">
+                        <img class="ui avatar image" src="/static/images/avatar_group/{{c_grup.grup.avatar_grup}}"
+                             style="border-radius: 2px !important; width:50px !important; height:50px !important;">
+                    </div>
+                    <div class="eleven wide column">
+                        <a href="/forum/group/view/{{c_grup.grup.id_grup}}" style="font-family: 'Exo', sans-serif;">{{c_grup.grup.nama_grup | truncatechars:17}}<br></a>
+                        <span class="post"><span id="members_{{c_grup.grup.id_grup}}">{{c_grup.grup.jumlah_anggota_grup}}</span> members</span><br>
+                        {% if c_grup.moderator %}
+                        <a class="ui grey label" href="/forum/group/edit/{{c_grup.grup.id_grup}}">Edit Group</a>
+                        {% else %}
+                        {% if c_grup.join == "is_join" %}
+                        <button class="ui red label" id="a_leave_{{c_grup.grup.id_grup}}">Leave Group</button>
+                        <button class="ui teal label" id="a_join_{{c_grup.grup.id_grup}}" style="display:none;">Join Group</button>
+                        <label class="ui orange label" id="a_waiting_{{c_grup.grup.id_grup}}" style="display: none;">Waiting...</label>
+                        {% elif c_grup.join == "not_join" %}
+                        <button class="ui teal label" id="b_join_{{c_grup.grup.id_grup}}">Join Group</button>
+                        <label class="ui orange label" id="b_waiting_{{c_grup.grup.id_grup}}" style="display: none;">Waiting...</label>
+                        {% else %}
+                        <label class="ui orange label">Waiting...</label>
+                        {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+{% block script %}
+
+<script>
+$('.menu .item').tab();
+$(document).ready(function(){
+    $email_user = {{email_user | safe}};
+    $.each($email_user, function( index, value ) {
+        value = value.replace(/\./g,'');
+        value = value.replace('@','');
+        $('body').on('click','#a_subs_'+value,function(){
+           $func_subscribe($email_user[index],$(this),$('#a_unsubs_'+value));
+        });
+        $('body').on('click','#a_unsubs_'+value,function(){
+           $func_unsubscribe($email_user[index],$(this),$('#a_subs_'+value));
+        });
+        $('body').on('click','#b_subs_'+value,function(){
+           $func_subscribe($email_user[index],$(this),$('#b_unsubs_'+value));
+        });
+        $('body').on('click','#b_unsubs_'+value,function(){
+           $func_subscribe($email_user[index],$(this),$('#b_subs_'+value));
+        });
+    });
+    $func_subscribe = function(email,a,b){
+        $.ajax({
+            type: 'POST',
+            url: '/forum/subscribe',
+            data: {
+                email_subscribed : email,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success:function(m){
+                a.hide();
+                b.show();
+            },
+            error:function(m){
+
+            }
+        });
+    }
+    $func_unsubscribe = function(email, a, b){
+        $.ajax({
+            type: 'POST',
+            url: '/forum/unsubscribe',
+            data: {
+                email_subscribed : email,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success:function(m){
+                a.hide();
+                b.show();
+            },
+            error:function(m){
+
+            }
+        });
+    }
+
+    <!--SEARCH USER-->
+    $('#search_user').on('keyup',function(){
+        $.ajax({
+            type: 'POST',
+            url: '/forum/search_user',
+            dataType:"html",
+            data: {
+                q : $(this).val(),
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+            },
+            success:function(m){
+                $('#data_users').html(m);
+            },
+            error:function(m){
+
+            }
+        });
+    });
+
+
+    $id_grup = {{id_grup | safe}};
+    $.each($id_grup, function( index, value ) {
+        $('body').on('click','#a_join_'+value,function(){
+            $func_join(value, $(this), $('#a_waiting_'+value));
+        });
+        $('body').on('click','#a_leave_'+value,function(){
+            $func_leave(value, $(this), $('#a_join_'+value));
+        });
+        $('body').on('click','#b_join_'+value,function(){
+            $func_join(value, $(this), $('#b_waiting_'+value));
+        });
+    });
+
+    $func_join = function(id_grup, a, b){
+        $.ajax({
+            type: 'POST',
+            url: '/forum/join',
+            data: {
+                id_grup : id_grup,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success:function(m){
+                a.hide();
+                b.show();
+            },
+            error:function(m){
+
+            }
+        });
+    }
+    $func_leave = function(id_grup, a, b){
+        $.ajax({
+            type: 'POST',
+            url: '/forum/leave',
+            data: {
+                id_grup : id_grup,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success:function(m){
+                a.hide();
+                b.show();
+                $member = $('#members_'+id_grup).text();
+                $('#members_'+id_grup).text(""+($member-1));
+            },
+            error:function(m){
+
+            }
+        });
+    }
+
+    <!--SEARCH GROUP-->
+    $('#search_group').on('keyup',function(){
+        $.ajax({
+            type: 'POST',
+            url: '/forum/search_group',
+            dataType:"html",
+            data: {
+                q : $(this).val(),
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+            },
+            success:function(m){
+                $('#data_groups').html(m);
+            },
+            error:function(m){
+
+            }
+        });
+    });
+});
+
+
+
+
+
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'Layout.html' %}
+{% block title %}
+Search {{q}}
+{% endblock %}
+
+{% block content %}
+{% load staticfiles %}
+<div class="ui main container">
+    <h3 style="font-family: 'Quicksand', sans-serif;">Search for '<i>{{q}}</i> '<br><span
+            style="color:grey; font-size:0.8em;">{{c_topic | length}} results</span></h3>
+    <div class="ui divider"></div>
+    <br>
+    <div class="ui internally celled grid ">
+        {% for topic in c_topic %}
+        <div class="row">
+            <div class="three wide column">
+                <img class="ui avatar image" style="border-radius:3px;"
+                     src="/static/images/avatar_user/{{topic.topic.email.avatar_user}}"><a
+                    class="name" href="/forum/user/view/{{topic.topic.email.email}}">{{topic.topic.email.full_name | truncatechars:24}}</a>
+                <div class="ui grid">
+                    <div class="seven wide column">
+                        <p class="date">{{topic.topic.date_created_topik | date}}</p>
+                    </div>
+                    <div class="nine wide column">
+                        <p class="comment"><i class="comments outline icon"></i>{{topic.topic.jumlah_komentar_topik}}
+                            comments</p>
+                    </div>
+                </div>
+            </div>
+            <div class="twelve wide column">
+                <a class="topic" href="/forum/topic/view/{{topic.id_hash}}">{{topic.topic.judul_topik}}</a>
+                <div style="margin-top: 7px; margin-bottom: -5px;">
+                    {% for tag in topic.tags %}
+                    <label class="ui label">{{tag}}</label>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script>
+$('.menu .item')
+  .tab()
+;
+$(document).ready(function(){
+ });
+
+
+</script>
+
+
+{% endblock %}

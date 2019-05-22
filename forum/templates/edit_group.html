@@ -1,0 +1,342 @@
+{% extends 'Layout.html' %}
+{% block title %}
+Edit Group {{grup.nama_grup}} | Forum Mahasiswa
+{% endblock %}
+
+{% block content %}
+{% load staticfiles %}
+<div class="ui main container">
+    <h1 class="title-kategori">Edit Group</h1><br>
+    <div class="ui grid">
+        <div class="three wide column">
+            <a data-tooltip="Edit avatar group" style="cursor:pointer;" id="btn_img"
+               class="ui small image">
+                <img src="/static/images/avatar_group/{{grup.avatar_grup}}" style="border-radius:3px;" id="img_view">
+            </a>
+            <div style="display:none" id="select_img"><br>
+                <span style="font-family: 'Quicksand', sans-serif;">Select avatar</span><br>
+                <i class="post">(courtesy of stackoverflow.com)</i>
+                <div>
+                    <img class="ui avatar image avatar_img" style="border-radius:1px;"
+                         src="/static/images/avatar_group/group_1.png" id="img_1">
+                    <img class="ui avatar image avatar_img" style="border-radius:1px;"
+                         src="/static/images/avatar_group/group_2.png" id="img_2">
+                    <img class="ui avatar image avatar_img" style="border-radius:1px;"
+                         src="/static/images/avatar_group/group_3.png" id="img_3">
+                    <img class="ui avatar image avatar_img" style="border-radius:1px;"
+                         src="/static/images/avatar_group/group_4.png" id="img_4">
+                    <img class="ui avatar image avatar_img" style="border-radius:1px;"
+                         src="/static/images/avatar_group/group_5.png" id="img_5">
+                </div>
+                <div style="margin-top:5px;">
+                    <img class="ui avatar image avatar_img" style="border-radius:1px;"
+                         src="/static/images/avatar_group/group_6.png" id="img_6">
+                    <img class="ui avatar image avatar_img" style="border-radius:1px;"
+                         src="/static/images/avatar_group/group_7.png" id="img_7">
+                    <img class="ui avatar image avatar_img" style="border-radius:1px;"
+                         src="/static/images/avatar_group/group_8.png" id="img_8">
+                    <img class="ui avatar image avatar_img" style="border-radius:1px;"
+                         src="/static/images/avatar_group/group_9.png" id="img_9">
+                    <img class="ui avatar image avatar_img" style="border-radius:1px;"
+                         src="/static/images/avatar_group/group_10.png" id="img_10">
+                </div>
+
+            </div>
+        </div>
+        <div class="eight wide column">
+            <span style="font-family: 'Quicksand', sans-serif;">Group Name <a><i style="cursor:pointer;"
+                                                                                class="ui icon edit" id="btn_name"></i></a></span>
+            <h4 style="font-family: 'Quicksand', sans-serif; margin-top:-3px;" id="label_name">{{grup.nama_grup}}</h4>
+            <div class=" ui form field" id="field_name" style="display:none; margin-top:-10px;">
+                <input id="input_name" value="{{grup.nama_grup}}" type="text">
+            </div>
+            <span style="font-family: 'Quicksand', sans-serif;">Group Description <a><i style="cursor:pointer;"
+                                                                           class="ui icon edit"
+                                                                           id="btn_desc"></i></a></span>
+            <h5 style="font-family: 'Quicksand', sans-serif; margin-top:-3px;" id="label_desc">{{grup.deskripsi_grup}}</h5>
+            <div class="ui form" id="field_desc" style="display:none; margin-top:-10px;">
+                <div class="field">
+                    <textarea id="input_desc" rows="3">{{grup.deskripsi_grup}}</textarea>
+                </div>
+                <button class="ui button" id="btn_update_desc">Update Description</button>
+            </div>
+        </div>
+        <div class="four wide column">
+            <span style="font-family: 'Quicksand', sans-serif;">Created at</span>
+            <h4 style="font-family: 'Quicksand', sans-serif; margin-top:-3px;">{{grup.date_created_grup | date}}</h4>
+        </div>
+    </div>
+    <div class="ui grid">
+        <div class="five wide column">
+            <h2 class="title-kategori">Users Request (<span id="label_request">{{ user_request |length }}</span>)</h2>
+            <div class="ui middle aligned selection list">
+                {% for user in user_request %}
+                <div id="user_{{user.email | cut:'@' | cut:'.'}}">
+                    <img class="ui avatar image" style="margin-bottom:5px;"
+                         src="/static/images/avatar_user/{{user.avatar_user}}">
+                    <a href="/forum/user/view/{{user.email}}" style="font-family: 'Exo', sans-serif;">{{user.full_name}}</a>
+                    <button class="ui red label" style="float:right;" id="reject_{{user.email | cut:'@' | cut:'.'}}">Reject</button>
+                    <button class="ui green label" style="float:right;" id="accept_{{user.email | cut:'@' | cut:'.'}}">Accept</button>
+                    <br>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="five wide column">
+            <h2 class="title-kategori">Members (<span id="label_members">{{ members |length }}</span>)</h2>
+            <div class="ui middle aligned selection list">
+                {% for user in members %}
+                <div id="member_{{user.email | cut:'@' | cut:'.'}}">
+                    <img class="ui avatar image" style="margin-bottom:5px;"
+                         src="/static/images/avatar_user/{{user.avatar_user}}">
+                    <a href="/forum/user/view/{{user.email}}" style="font-family: 'Exo', sans-serif;">{{user.full_name}}</a>
+                    <button class="ui red label" style="float:right;" id="remove_{{user.email | cut:'@' | cut:'.'}}">Remove</button>
+                    <br>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="six wide column">
+            <h2 class="title-kategori">Topics Group (<span id="label_topic">{{ c_topic |length }}</span>)</h2>
+            <div class="ui middle aligned selection list">
+                {% for topic in c_topic %}
+                <div class="ui grid" style="margin-bottom:-35px;" id="topic_{{topic.topic.id_topik}}">
+                    <div class="fourteen wide column">
+                        <a href="/forum/topic/view/{{topic.id_hash}}"
+                           style="font-family: 'Exo', sans-serif; font-size: 1.2em;">{{topic.topic.judul_topik}}</a>
+                    </div>
+                    <div class="two wide column">
+                        <button class="ui red label" style="float:right;" id="delete_topik_{{topic.topic.id_topik}}">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+$(document).ready(function(){
+    $id_grup = {{grup.id_grup}};
+    $('#btn_img').on('click',function(){
+        $('#select_img').show();
+    });
+
+    $func_update_img = function(img){
+         $.ajax({
+            type: 'POST',
+            url: '/forum/update_avatar_group',
+            data: {
+                img : img,
+                id_grup : $id_grup,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success:function(m){
+                $('#img_view').attr("src", "/static/images/avatar_group/"+img);
+            },
+            error:function(m){
+
+            }
+        });
+    }
+    $func_update_nama = function(nama){
+         $.ajax({
+            type: 'POST',
+            url: '/forum/update_nama_group',
+            data: {
+                nama : nama,
+                id_grup : $id_grup,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success:function(m){
+                $('#label_name').text(nama);
+                $('#field_name').hide();
+            },
+            error:function(m){
+
+            }
+        });
+    }
+    $func_update_desc = function(desc){
+         $.ajax({
+            type: 'POST',
+            url: '/forum/update_desc_group',
+            data: {
+                desc : desc,
+                id_grup : $id_grup,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success:function(m){
+                $('#label_desc').text(desc);
+                $('#field_desc').hide();
+            },
+            error:function(m){
+
+            }
+        });
+    }
+
+    $('#img_1').on('click',function(){
+        $func_update_img("group_1.png");
+    })
+     $('#img_2').on('click',function(){
+        $func_update_img("group_2.png");
+    })
+     $('#img_3').on('click',function(){
+        $func_update_img("group_3.png");
+    })
+     $('#img_4').on('click',function(){
+        $func_update_img("group_4.png");
+    })
+     $('#img_5').on('click',function(){
+        $func_update_img("group_5.png");
+    })
+     $('#img_6').on('click',function(){
+        $func_update_img("group_6.png");
+    })
+     $('#img_7').on('click',function(){
+        $func_update_img("group_7.png");
+    })
+     $('#img_8').on('click',function(){
+        $func_update_img("group_8.png");
+    })
+     $('#img_9').on('click',function(){
+        $func_update_img("group_9.png");
+    })
+     $('#img_10').on('click',function(){
+        $func_update_img("group_10.png");
+    })
+
+    $('#btn_name').on('click',function(){
+        $('#field_name').show();
+    })
+    $('#input_name').keypress(function(e){
+          if ( e.which == 13 ) {
+            $func_update_nama($(this).val());
+          }
+    })
+    $('#btn_desc').on('click',function(){
+        $('#field_desc').show();
+    });
+    $('#btn_update_desc').on('click',function(){
+        $func_update_desc($('#input_desc').val());
+    });
+
+
+
+    $email_request = {{email_request | safe}}
+    $email_members = {{email_members | safe}}
+
+    $.each($email_request, function(index,value ) {
+        value = value.replace(/\./g,'');
+        value = value.replace('@','');
+        $('body').on('click','#accept_'+value,function(){
+           $func_accept($email_request[index]);
+        });
+        $('body').on('click','#reject_'+value,function(){
+           $func_reject($email_request[index]);
+        });
+    });
+    $.each($email_members, function(index,value ) {
+        value = value.replace(/\./g,'');
+        value = value.replace('@','');
+        $('body').on('click','#remove_'+value,function(){
+           $func_remove($email_members[index]);
+        });
+    });
+
+    $func_accept = function(email){
+        $.ajax({
+            type: 'POST',
+            url: '/forum/accept_user',
+            data: {
+                email : email,
+                id_grup : $id_grup,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success:function(m){
+                email = email.replace(/\./g,'');
+                email = email.replace('@','');
+                $('#user_'+email).hide();
+                $n = $('#label_request').text();
+                $('#label_request').text(""+$n-1);
+            },
+            error:function(m){
+
+            }
+        });
+    }
+    $func_reject = function(email){
+        $.ajax({
+            type: 'POST',
+            url: '/forum/reject_user',
+            data: {
+                email : email,
+                id_grup : $id_grup,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success:function(m){
+                email = email.replace(/\./g,'');
+                email = email.replace('@','');
+                $('#user_'+email).hide();
+                $n = $('#label_request').text();
+                $('#label_request').text(""+$n-1);
+            },
+            error:function(m){
+
+            }
+        });
+    }
+     $func_remove = function(email){
+        $.ajax({
+            type: 'POST',
+            url: '/forum/remove_user',
+            data: {
+                email : email,
+                id_grup : $id_grup,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success:function(m){
+                email = email.replace(/\./g,'');
+                email = email.replace('@','');
+                $('#member_'+email).hide();
+                $n = $('#label_members').text();
+                $('#label_members').text(""+$n-1);
+            },
+            error:function(m){
+
+            }
+        });
+    }
+    $id_topic = {{id_topics | safe }};
+    $.each($id_topic, function( index, value ) {
+        $('#delete_topik_'+value).on('click',function(){
+            $func_delete_topic(value);
+        })
+    });
+     $func_delete_topic = function(id_topic){
+         $.ajax({
+            type: 'POST',
+            url: '/forum/delete_topic',
+            data: {
+                id_topic : id_topic,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success:function(m){
+                $('#topic_'+id_topic).hide();
+                $n = $('#label_topic').text();
+                $('#label_topic').text(""+$n-1);
+            },
+            error:function(m){
+
+            }
+        });
+    }
+})
+</script>
+
+
+{% endblock %}

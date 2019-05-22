@@ -1,0 +1,167 @@
+{% extends 'Layout.html' %}
+{% block title %}
+{{c_user.user.full_name}} | Forum Mahasiswa
+{% endblock %}
+
+{% block content %}
+{% load staticfiles %}
+<div class="ui main container">
+    <br>
+    <div class="ui grid">
+        <div class="four wide column">
+            <img class="ui medium rounded image" src="/static/images/avatar_user/{{c_user.user.avatar_user}}">
+        </div>
+        <div class="eight wide column">
+            <h1 style="font-family: 'Quicksand', sans-serif; font-size:2.5em !important;">{{c_user.user.full_name}}</h1>
+            <p style="font-family: 'Quicksand', sans-serif; color:#5c5c3d; margin-top:-15px;">
+                {{c_user.user.email}}</p>
+            <p style="font-family: 'Quicksand', sans-serif; color:#3d3d29; line-height: 110%; font-size:2em;">
+                {{c_user.user.fakultas}}<br>{{c_user.user.jurusan}}<br>
+                {% if c_user.user.klub %}
+                {{c_user.user.klub}}
+                {% endif %}
+            </p>
+
+        </div>
+        <div class="four wide column">
+            <p class="date" style=" color:#3d3d29; font-size:1.1em;"><b>Joined at </b><br>{{c_user.user.date_created_user|date}}<br><b>Total
+                post</b><br> {{c_user.user.jumlah_topik_user}} topics</p>
+            {% if c_user.subscribe == "not" %}
+            <div class="ui labeled button" tabindex="0" id="a_subs">
+                <div class="ui teal button">Subscribe</div>
+                <a class="ui basic teal left pointing label" id="text_a_subs">
+                    {{c_user.user.jumlah_subscriber}}
+                </a>
+            </div>
+            <div class="ui labeled button" tabindex="0" id="a_unsubs" style="display:none;">
+                <div class="ui red button">Unsubscribe</div>
+                <a class="ui basic red left pointing label" id="text_a_unsubs">
+                    {{c_user.user.jumlah_subscriber}}
+                </a>
+            </div>
+            {% elif c_user.subscribe == "is" %}
+            <div class="ui labeled button" tabindex="0" id="b_unsubs">
+                <div class="ui red button">Unsubscribe</div>
+                <a class="ui basic red left pointing label" id="text_b_unsubs">
+                    {{c_user.user.jumlah_subscriber}}
+                </a>
+            </div>
+            <div class="ui labeled button" tabindex="0" id="b_subs" style="display:none;">
+                <div class="ui teal button">Subscribe</div>
+                <a class="ui basic teal left pointing label" id="text_b_subs">
+                    {{c_user.user.jumlah_subscriber}}
+                </a>
+            </div>
+            {% else %}
+            <label class="ui orange basic label" style="font-size:1.1em !important;">Subscribers
+                {{c_user.user.jumlah_subscriber}}</label>
+            {% endif %}
+        </div>
+    </div>
+    <br>
+    <br>
+    <div class="ui grid">
+        <div class="four wide column">
+            <h2 class="title-kategori">Groups ({{ c_user.grup |length }})</h2>
+            <div class="ui middle aligned selection list">
+                {% for grup in c_user.grup %}
+                <a class="item" href="/forum/group/view/{{grup.id_grup}}">
+                    <img class="ui avatar image" src="/static/images/avatar_group/{{grup.avatar_grup}}">
+                    <div class="content">
+                        <div style="font-family: 'Exo', sans-serif; color: #4183C4;">{{grup.nama_grup |
+                            truncatechars:31}}
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+
+
+        </div>
+        <div class="twelve wide column">
+            <h2 class="title-kategori">Top Posts ({{c_user.topik | length}})</h2>
+            <div class="ui internally celled grid ">
+                {% for topik in c_user.topik %}
+                <div class="row">
+                    <div class="two wide column">
+                        <p class="comment" style="font-size:1em;"><i class="comments outline icon"></i>{{topik.topik.jumlah_komentar_topik}}</p>
+                    </div>
+                    <div class="thirteen wide column">
+                        <a class="topic" href="/forum/topic/view/{{topic.id_hash}}">{{topik.topik.judul_topik}}</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+
+<script>
+$(document).ready(function(){
+    $email = "{{c_user.user.email}}";
+    $jlh = {{c_user.user.jumlah_subscriber}};
+    $('#a_subs').on('click',function(){
+        $func_subscribe($(this), $('#a_unsubs'), $('#text_a_unsubs'));
+    })
+    $('#a_unsubs').on('click',function(){
+        $func_unsubscribe($(this), $('#a_subs'), $('#text_a_subs'));
+    })
+    $('#b_subs').on('click',function(){
+        $func_subscribe($(this), $('#b_unsubs'), $('#text_b_unsubs'));
+    })
+    $('#b_unsubs').on('click',function(){
+        $func_unsubscribe($(this), $('#b_subs'), $('#text_b_subs'));
+    })
+
+    $func_subscribe = function(a,b,text){
+        $.ajax({
+            type: 'POST',
+            url: '/forum/subscribe',
+            data: {
+                email_subscribed : $email,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success:function(m){
+                a.hide();
+                b.show();
+                $jlh+=1;
+                text.text(""+$jlh);
+            },
+            error:function(m){
+
+            }
+        });
+    }
+    $func_unsubscribe = function(a, b, text){
+        $.ajax({
+            type: 'POST',
+            url: '/forum/unsubscribe',
+            data: {
+                email_subscribed : $email,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success:function(m){
+                a.hide();
+                b.show();
+                $jlh-=1;
+                text.text(""+$jlh);
+            },
+            error:function(m){
+
+            }
+        });
+    }
+
+});
+
+
+
+
+
+
+</script>
+
+
+{% endblock %}

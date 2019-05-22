@@ -1,0 +1,136 @@
+{% extends 'Layout.html' %}
+{% block title %}
+Create New Group | Forum Mahasiswa
+{% endblock %}
+
+{% block content %}
+{% load staticfiles %}
+<div class="ui main container">
+    <div class="ui grid">
+        <div class="six wide tablet eight wide computer column">
+            <div style="text-align: center; margin-top:217px;" class="slogan">
+                <h1 class="slogan1">MAKE YOUR</h1>
+                <h1 class="slogan2">DISCUSSION</h1>
+                <h1 class="slogan3">EASY TO TELL</h1>
+            </div>
+        </div>
+        <div class="six wide tablet seven wide computer column">
+            <form method="post" action="/forum/group/create_new">
+                {% csrf_token %}
+                <div class="ui form warning segment">
+                    <h3 class="" style="text-align: center; margin-top:-2px; color: #e67300;">CREATE GROUP</h3>
+                    <div class="ui divider"></div>
+                    <br>
+                    <div class="field">
+                        <label>Group Name</label>
+                        <div class="ui left labeled icon input">
+                            <input placeholder="group name" type="text" id="name" name="name_group">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Group Description</label>
+                        <textarea placeholder="group description" rows="4" id="desc" name="desc"></textarea>
+                    </div>
+                    <div class="field">
+                        <label>Select Avatar Group</label>
+                        <div class="ui mini images">
+                            <img class="ui image avatar_img" src="{% static 'images/avatar_group/group_1.png'%}"
+                                 id="img_1">
+                            <img class="ui image avatar_img" src="{% static 'images/avatar_group/group_2.png'%}"
+                                 id="img_2">
+                            <img class="ui image avatar_img" src="{% static 'images/avatar_group/group_3.png'%}"
+                                 id="img_3">
+                            <img class="ui image avatar_img" src="{% static 'images/avatar_group/group_4.png'%}"
+                                 id="img_4">
+                            <img class="ui image avatar_img" src="{% static 'images/avatar_group/group_5.png'%}"
+                                 id="img_5">
+                            <img class="ui image avatar_img" src="{% static 'images/avatar_group/group_6.png'%}"
+                                 id="img_6">
+                            <img class="ui image avatar_img" src="{% static 'images/avatar_group/group_7.png'%}"
+                                 id="img_7">
+                            <img class="ui image avatar_img" src="{% static 'images/avatar_group/group_8.png'%}"
+                                 id="img_8">
+                            <img class="ui image avatar_img" src="{% static 'images/avatar_group/group_9.png'%}"
+                                 id="img_9">
+                            <img class="ui image avatar_img" src="{% static 'images/avatar_group/group_10.png'%}"
+                                 id="img_10">
+                        </div>
+                        <i class="post">(courtesy of stackoverflow.com)</i>
+                    </div>
+                    <img class="ui tiny image" src="" id="img_view" style="border-radius:4px;">
+                    <input type="hidden" id="img" name="img">
+                    <br>
+                    <input type="submit" class="ui primary button submit" id="btn_submit" value="Create Grup" disabled>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script type="text/javascript">
+
+$(document).ready(function(){
+    $func_valid_form = function(){
+        if($('#name').val() != "" && $('#desc').val() != "" && $('#img').val() != ""){
+            $('#btn_submit').prop('disabled', false);
+        }
+        else{
+            $('#btn_submit').prop('disabled', true);
+        }
+    }
+    $func_view_image = function(src){
+        $('#img_view').attr("src","/static/images/avatar_group/"+src);
+        $('#img').val(src);
+        $func_valid_form();
+    }
+    $('#img_1').click(function(){
+        $func_view_image("group_1.png");
+    });
+    $('#img_2').click(function(){
+        $func_view_image("group_2.png");
+    });
+    $('#img_3').click(function(){
+        $func_view_image("group_3.png");
+    });
+    $('#img_4').click(function(){
+        $func_view_image("group_4.png");
+    });
+    $('#img_5').click(function(){
+        $func_view_image("group_5.png");
+    });
+    $('#img_6').click(function(){
+        $func_view_image("group_6.png");
+    });
+    $('#img_7').click(function(){
+        $func_view_image("group_7.png");
+    });
+    $('#img_8').click(function(){
+        $func_view_image("group_8.png");
+    });
+    $('#img_9').click(function(){
+        $func_view_image("group_9.png");
+    });
+    $('#img_10').click(function(){
+        $func_view_image("group_10.png");
+    });
+
+    $('#name').on('keyup',function(){
+        $func_valid_form();
+    });
+    $('#desc').on('keyup',function(){
+        $func_valid_form();
+    });
+
+
+});
+
+
+
+
+
+</script>
+
+
+{% endblock %}

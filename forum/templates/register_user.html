@@ -1,0 +1,181 @@
+{% extends 'Layout.html' %}
+{% block title %}
+Register User | Forum Mahasiswa
+{% endblock %}
+
+{% block content %}
+{% load staticfiles %}
+<div class="ui main container">
+    <div class="ui centered grid">
+        <div class="six wide tablet eleven wide computer column">
+            {% if is_valid == "True" %}
+            <div class="ui message" id="message">
+                <i class="close icon"></i>
+                <h4 class="header" id="header-message">Verify your account</h4>
+                <h5 id="content-message">Please check your email to verify account</h5>
+            </div>
+            {% else %}
+            <form id="form-register" method="post" action="/forum/user/register">
+                {% csrf_token %}
+                <div class="ui form warning segment">
+                    <img src="{% static 'images/logos/5.png'%}" class="ui centered mini image">
+                    <h2 class="title-kategori"
+                        style="text-align: center; margin-top:-2px;">REGISTER ACCOUNT</h2>
+
+                    {% if error == "true" %}
+                    <div class="ui warning message">
+                        <div class="header">Attention!</div>
+                        <div class="ui list">
+                            <div class="item">Fields <strong>*</strong> and <strong>Captcha</strong> are required.</div>
+                            <div class="item">A confirmation account will be sent to your <strong>Email</strong>.</div>
+                        </div>
+                    </div>
+                    {% endif %}<br>
+                    <div class="field">
+                        <label>Full Name</label>
+                        <div class="ui left labeled icon input">
+                            <input placeholder="eg:Billy Chen : maxLength[20]" type="text" id="name" name="name" autocomplete="off">
+                            <div class="ui corner label">
+                                <i class="icon asterisk"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="two fields">
+                        <div class="field">
+                            <label>Faculty</label>
+                            <select class="ui dropdown" id="faculty" name="faculty">
+                                <option value="">Select Faculty *</option>
+                                <option value="Fakultas Teknik Informatika & Elektro (FTIE)">Fakultas Teknik Informatika
+                                    & Elektro (FTIE)
+                                </option>
+                                <option value="Fakultas Bioteknologi (FB)">Fakultas Bioteknologi (FB)</option>
+                                <option value="Fakultas Teknologi Industri (FTI)">Fakultas Teknologi Industri (FTI)
+                                </option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label>Major</label>
+                            <select class="ui dropdown" id="major" name="major">
+                                <option value="">Select Major *</option>
+                            </select>
+                        </div>
+
+                    </div>
+                    <div class="field">
+                        <label>Email</label>
+                        <div class="ui left labeled icon input">
+                            <input placeholder="Example@gmail.com" type="email" id="email" name="email">
+                            <div class="ui corner label">
+                                <i class="icon asterisk"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Password</label>
+                        <div class="ui left labeled icon input">
+                            <input placeholder="Password : minLength[6]" type="password" id="password" name="password">
+                            <div class="ui corner label">
+                                <i class="icon asterisk"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="g-recaptcha" id="g-recaptcha"
+                         data-sitekey="6LdWFR4UAAAAACH20zdXd0MWmzIUh3j_ibukUiFC"></div>
+                    <br>
+                    <input type="submit" class="ui primary button submit" value="Sign Up">
+                </div>
+            </form>
+            {% endif %}
+            <div class="ui bottom attached warning message">Already signed up? <a href="/forum/user/sign_in">Login here</a> instead.</div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script src='https://www.google.com/recaptcha/api.js'></script>
+<script type="text/javascript">
+$(".dropdown").dropdown();
+$('.message .close')
+  .on('click', function() {
+    $(this)
+      .closest('.message')
+      .transition('fade');
+  });
+
+$(document).ready(function(){
+    $('#email').on('keyup',function(){
+        $email = $(this).val();
+        $user_email = {{user_email | safe}}
+        $.each($user_email, function( index, value ) {
+            if($email == value){
+                $alert_error_email();
+            }
+        });
+    });
+    $alert_error_email = function(){
+        $.uiAlert({
+            textHead: 'Email has been used!', // header
+            text: 'Please use another email', // Text
+            bgcolor: '#F2711C', // background-color
+            textcolor: '#fff', // color
+            position: 'top-center',// position . top And bottom ||  left / center / right
+            icon: 'warning sign', // icon in semantic-UI
+            time: 1, // time
+        })
+    };
+    $('#faculty').change(function(){
+        $faculty = $(this).val();
+        if($faculty == "Fakultas Teknik Informatika & Elektro (FTIE)"){
+            $options = {
+                'Sistem Informasi (S1-SI)': 'Sistem Informasi (S1-SI)',
+                'Teknik Informatika (S1-TI)': 'Teknik Informatika (S1-TI)',
+                'Teknik Elektro (S1-TE)': 'Teknik Elektro (S1-TE)',
+                'Teknik Informatika (D4-TI)': 'Teknik Informatika (D4-TI)',
+                'Teknik Informatika (D3-TI)': 'Teknik Informatika (D3-TI)',
+                'Teknik Komputer (D3-TK)': 'Teknik Komputer (D3-TK)'
+            };
+            $select = $('#major');
+            $select.empty();
+            $select.dropdown('clear');
+            $.each($options, function(val, text) {
+                 $select.append(
+                        $('<option></option>').val(val).html(text)
+                  );
+            });
+        }
+        else if ($faculty == "Fakultas Bioteknologi (FB)"){
+            $options = {
+                'Teknik Bioproses (S1-BP)': 'Teknik Bioproses (S1-BP)'
+            };
+            $select = $('#major');
+            $select.empty();
+            $select.dropdown('clear');
+            $.each($options, function(val, text) {
+                 $select.append(
+                        $('<option></option>').val(val).html(text)
+                  );
+            });
+        }
+        else if ($faculty == "Fakultas Teknologi Industri (FTI)"){
+            $options = {
+                'Manajemen Rekayasa (S1-MR)': 'Manajemen Rekayasa (S1-MR)'
+            };
+            $select = $('#major');
+            $select.empty();
+            $select.dropdown('clear');
+            $.each($options, function(val, text) {
+                 $select.append(
+                        $('<option></option>').val(val).html(text)
+                  );
+            });
+        }
+    });
+
+});
+
+</script>
+
+
+{% endblock %}

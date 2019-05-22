@@ -1,0 +1,69 @@
+{% extends 'Layout.html' %}
+{% block title %}
+{{grup.nama_grup}} | Forum Mahasiswa
+{% endblock %}
+
+{% block content %}
+{% load staticfiles %}
+<div class="ui main container">
+    <div class="ui grid">
+        <div class="two wide column">
+            <img class="ui tiny circular image" src="/static/images/avatar_group/{{grup.avatar_grup}}">
+        </div>
+        <div class="thirteen wide column">
+            <h1 style="font-family: 'Quicksand', sans-serif;"><a href="/forum/group/view/{{grup.id_grup}}">{{grup.nama_grup}}</a><br><span
+                    style="font-family: 'Exo', sans-serif !important; color:grey;">[{{c_topic | length}} topics]</span>
+            </h1>
+        </div>
+
+    </div>
+    <div class="ui divider"></div>
+    <br>
+    <div class="ui internally celled grid ">
+        {% for topic in c_topic %}
+        <div class="row">
+            <div class="three wide column">
+                <img class="ui avatar image" style="border-radius:3px;"
+                     src="/static/images/avatar_user/{{topic.topic.email.avatar_user}}"><a
+                    class="name" href="/forum/user/view/{{topic.topic.email.email}}">{{topic.topic.email.full_name | truncatechars:24}}</a>
+                <div class="ui grid">
+                    <div class="seven wide column">
+                        <p class="date">{{topic.topic.date_created_topik | date}}</p>
+                    </div>
+                    <div class="nine wide column">
+                        <p class="comment"><i class="comments outline icon"></i>{{topic.topic.jumlah_komentar_topik}}
+                            comments</p>
+                    </div>
+                </div>
+            </div>
+            <div class="twelve wide column">
+                <a class="topic" href="/forum/topic/view/{{topic.id_hash}}">{{topic.topic.judul_topik}}</a>
+                <div style="margin-top: 7px; margin-bottom: -5px;">
+                    {% for tag in topic.tags %}
+                    <label class="ui label">{{tag}}</label>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script>
+$('.menu .item')
+  .tab()
+;
+$(document).ready(function(){
+ });
+
+
+
+
+</script>
+
+
+{% endblock %}

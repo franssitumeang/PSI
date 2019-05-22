@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% load staticfiles %}
+    <link rel="icon" type="image/jpeg" href="{% static 'images/logos/logo_forum.png'%}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/semantic.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/Semantic-UI-Alert.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css?{% now 'U' %}"/>
+    <link rel='stylesheet prefetch'
+          href='https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/icon.min.css'>
+    <script type="text/javascript" src="{% static 'js/jquery-3.1.1.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/semantic.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/Semantic-UI-Alert.js' %}"></script>
+    <title>{% block title %}{% endblock %}</title>
+    <style type="text/css">
+      body {
+        background-color: #FFFFFF;
+      }
+      .ui.menu .item img.logo {
+        margin-right: 1.5em;
+      }
+      .main.container {
+        margin-top: 6em;
+        margin-bottom: 7em;
+      }
+      .wireframe {
+        margin-top: 2em;
+      }
+      .ui.footerman.segment {
+        margin: 5em 0em 0em;
+        padding: 5em 0em;
+      }
+
+
+
+
+    </style>
+</head>
+<body>
+<div class="ui fixed menu"
+     style="height: 3.9em !important; border-top: solid #e67300 !important; border-top-width: 1px !important;">
+    <div class="ui container">
+        {% if email_login %}
+        <a id="btn-push" class="header item"><i class="list layout icon"></i></a>
+        {% endif %}
+        <a href="/forum" class="header item">
+            <img class="logo" src="{% static 'images/logos/5.png'%}" style="width: 2em;">
+            <span class="title-forum1">FORUM&nbsp;</span><span class="title-forum2">MAHASISWA</span>
+        </a>
+        <div class="item">
+            <form action="/forum/topic/search" method="get">
+                <div class="ui search">
+                    <div class="ui icon input">
+                        <input class="prompt" placeholder="Search topic..."
+                               style="border-radius: 0% !important; width: 30em;" type="text" name="q" value="{{q}}">
+                        <i class="search icon"></i>
+
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="right menu">
+            {% if email_login %}
+            <h4 class="ui header item">
+                <div class="content">
+                    <div class="ui inline dropdown">
+                        <div class="" style="margin-right:-10px;" id="btn_notif"> <i class="alarm outline icon"></i>
+                            {% if notif_not_read %}
+                            <div class="floating ui red label" style="font-size:0.5em; margin-left:-25px !important; margin-top:-5px !important;" id="label_notif">{{notif_not_read | length}}</div>
+                            {% endif %}
+                        </div>
+                        <div class="menu" style="overflow: scroll; height: 200px;">
+                            {% for n in notif %}
+                            <div class="item">
+                                {{n.isi_notifikasi | safe}}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </h4>
+            <h4 class="ui header item">
+                <img class="ui avatar image" style="" src="/static/images/avatar_user/{{email_login.avatar_user}}">
+                <div class="content">
+                    <div class="ui inline dropdown">
+                        <div class="">{{email_login.full_name}} <i class="dropdown icon"></i></div>
+                        <div class="menu">
+                            <div class="item"><a href="/forum/user/edit/profile"><i class="user icon"></i> Edit
+                                Profile</a>
+                            </div>
+                            <div class="item"><a href="/forum/sign_out"><i class="sign out icon"></i> Sign Out</a></div>
+                        </div>
+                    </div>
+                </div>
+            </h4>
+        </div>
+        {% else %}
+        <div class="item">
+            <a class="ui button blue labeled icon" href="/forum/user/sign_in" id="btn" style=""><i
+                    class="sign in icon"></i>SIGN IN</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+</div>
+<div class="ui left sidebar vertical menu">
+    <a href="/forum" class="item side-menu-link">
+        <i class="home icon"></i>
+        Home
+    </a>
+    <a href="/forum/topic/create" class="item side-menu-link">
+        <i class="write icon"></i>
+        Create Topic
+    </a>
+    <a href="/forum/topic/recommended" class="item side-menu-link">
+        <i class="thumbs outline  up icon"></i>
+        Recommended
+    </a>
+    <a href="/forum/users/groups" class="item side-menu-link">
+        <i class="users icon"></i>
+        Users & Groups
+    </a>
+    <div class="header item" style="font-family: 'Rajdhani', sans-serif; color:#e67300;">CATEGORIES</div>
+    <div class="ui accordion">
+        {% for tipe_category in c_category %}
+        <div class="title side-menu"><i class="dropdown icon"></i>{{tipe_category.tipe_kategori.nama_kategori}}</div>
+        <div class="content side-menu-link">
+            {% for category in tipe_category.kategori%}
+            <a class="item" style="font-size:0.812em;" href="/forum/topic/category/{{category.id_kategori}}">{{category.judul_kategori}}</a>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+    <div class="header item" style="font-family: 'Rajdhani', sans-serif; color:#e67300;">MY GROUPS</div>
+    {% for grup in c_my_grup %}
+    <a href="/forum/group/edit/{{grup.id_grup}}" class="item side-menu-link"><img class="ui avatar image"
+                                                                                  src="/static/images/avatar_group/{{grup.avatar_grup}}"
+                                                                                  style="border-radius:3px; height:21px; width:21px;">
+        {{grup.nama_grup | truncatechars:29}}</a>
+    {% endfor %}
+    <div class="header item" style="font-family: 'Rajdhani', sans-serif; color:#e67300;">JOINED GROUPS</div>
+    {% for grup in c_joined_grup %}
+    <a href="/forum/topic/group/{{grup.id_grup}}" class="item side-menu-link"><img class="ui avatar image"
+                                                                                  src="/static/images/avatar_group/{{grup.avatar_grup}}"
+                                                                                  style="border-radius:3px; height:21px; width:21px;">
+        {{grup.nama_grup | truncatechars:29}}</a>
+    {% endfor %}
+    <div class="header item" style="font-family: 'Rajdhani', sans-serif; color:#e67300;">SUBSCRIPTION</div>
+    {% for user in c_subscription %}
+    <a href="/forum/user/view/{{user.email}}" class="item side-menu-link"><img class="ui avatar image"
+                                                                               src="/static/images/avatar_user/{{user.avatar_user}}"
+                                                                               style="height:21px; width:21px;">
+        {{user.full_name | truncatechars:29}}</a>
+    {% endfor %}
+
+</div>
+{% block content %}
+{% endblock %}
+<div class="ui inverted vertical footer segment">
+    <div class="ui center aligned container">
+        {% if email_login %}
+        <div class="ui stackable inverted divided grid center aligned container"">
+            {% for tipe_category in c_category %}
+            <div class="three wide column">
+                <h4 class="ui inverted header">{{tipe_category.tipe_kategori.nama_kategori}}</h4>
+                <div class="ui inverted link list">
+                    {% for category in tipe_category.kategori%}
+                    <a href="/forum/topic/category/{{category.id_kategori}}" class="item"
+                       style="">{{category.judul_kategori}}</a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="ui inverted section divider"></div>
+        {% endif %}
+        <img src="{% static 'images/logos/5.png'%}" class="ui centered mini image">
+        <div class="ui horizontal inverted small divided link list">
+            <p><strong>FORUM MAHASISWA</strong></p>
+            <span>Copyright &copy; Kelompok 13 Proyek Sistem Informasi</span>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+$(".dropdown").dropdown();
+  $(document).ready(function(){
+     $('.ui.accordion').accordion();
+    $('#btn-push').click(function(){
+         $('.left.sidebar').sidebar('toggle','show','hide');
+    });
+    $('#search').click(function(){
+        $('#search-item').attr("width","30em");
+    });
+    $('#btn_notif').on('click', function(){
+        $.ajax({
+            type: 'POST',
+            url: '/forum/update_notif',
+            data: {
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success:function(m){
+                $('#label_notif').hide();
+            },
+            error:function(m){
+
+            }
+        });
+    })
+  });
+
+    $('.ui.search')
+    .search({
+        type: 'standard',
+        source: content,
+        searchFields: ['title'],
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+{% block script%}
+{% endblock %}
+</html>

@@ -1,0 +1,132 @@
+{% extends 'Layout.html' %}
+{% block title %}
+{{c_grup.grup.nama_grup}} | Forum Mahasiswa
+{% endblock %}
+
+{% block content %}
+{% load staticfiles %}
+<div class="ui main container">
+    <br>
+    <div class="ui grid">
+        <div class="four wide column">
+            <img class="ui medium rounded image" src="/static/images/avatar_group/{{c_grup.grup.avatar_grup}}">
+        </div>
+        <div class="eight wide column">
+            <h1 style="font-family: 'Quicksand', sans-serif; font-size:2.5em !important;">{{c_grup.grup.nama_grup}}</h1>
+            <p style="font-family: 'Quicksand', sans-serif; color:#5c5c3d; margin-top:-14px;"><img
+                    class="ui avatar image" src="/static/images/avatar_user/{{c_grup.grup.moderator.avatar_user}}"><a
+                    href="/forum/user/view/{{c_grup.grup.moderator.email}}">{{c_grup.grup.moderator.full_name}}</a></p>
+            <strong style="font-family: 'Quicksand', sans-serif;">Group description</strong>
+            <p style="font-family: 'Quicksand', sans-serif; color:#5c5c3d;">{{c_grup.grup.deskripsi_grup}}</p>
+        </div>
+        <div class="four wide column">
+            <p class="date" style=" color:#3d3d29; font-size:1.1em;"><b>Created at </b><br>{{c_grup.grup.date_created_grup|date}}<br><b>Total
+                members</b><br> <span id="members">{{c_grup.grup.jumlah_anggota_grup}}</span> users<br><b>Total
+                post</b><br> {{c_grup.grup.jumlah_topik_grup}} topics</p>
+            {% if c_grup.is_moderator %}
+            <a href="#" class="ui grey button">EDIT GROUP</a>
+            {% else %}
+            {% if c_grup.is_join == "not"%}
+            <button class="ui teal button" id="a_join">JOIN GROUP</button>
+            <label class="ui orange label" id="a_label" style="display:none">waiting...</label>
+            {% elif c_grup.is_join == "is"%}
+            <button class="ui red button" id="b_leave">LEAVE GROUP</button>
+            <button class="ui teal button" id="b_join" style="display:none">JOIN GROUP</button>
+            <label class="ui orange label" id="b_label" style="display:none">waiting...</label>
+            {% else %}
+            <label class="ui orange label">waiting...</label>
+            {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    <br>
+    <br>
+    <div class="ui grid">
+        <div class="four wide column">
+            <h2 class="title-kategori">Members ({{c_grup.grup.jumlah_anggota_grup}})</h2>
+            <div class="ui middle aligned selection list">
+                {% for user in c_grup.user %}
+                <a class="item" href="/forum/user/view/{{user.email}}">
+                    <img class="ui avatar image" src="/static/images/avatar_user/{{user.avatar_user}}">
+                    <div class="content">
+                        <div style="font-family: 'Exo', sans-serif; color: #4183C4;">{{user.full_name}}</div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="twelve wide column">
+            <h2 class="title-kategori">Discused topic ({{c_grup.grup.jumlah_topik_grup}})</h2>
+            <ul>
+                {% for topik in c_grup.topic %}
+                <li><span style="font-family: 'Exo', sans-serif; font-size: 1.2em;">{{topik.judul_topik}}</span><br>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+
+<script>
+$(document).ready(function(){
+    $id_grup = {{c_grup.grup.id_grup}}
+    $('#a_join').on('click', function(){
+        $func_join($(this), $('#a_label'));
+    })
+    $('#b_join').on('click', function(){
+        $func_join($(this), $('#b_label'));
+    })
+    $('#b_leave').on('click', function(){
+        $func_leave($(this), $('#b_join'));
+    })
+
+    $func_join = function(a, b){
+        $.ajax({
+            type: 'POST',
+            url: '/forum/join',
+            data: {
+                id_grup : $id_grup,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success:function(m){
+                a.hide();
+                b.show();
+            },
+            error:function(m){
+
+            }
+        });
+    }
+    $func_leave = function(a, b){
+        $.ajax({
+            type: 'POST',
+            url: '/forum/leave',
+            data: {
+                id_grup : $id_grup,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success:function(m){
+                a.hide();
+                b.show();
+                $member = $('#members').text();
+                $('#members').text(""+($member-1));
+            },
+            error:function(m){
+
+            }
+        });
+    }
+
+
+})
+
+
+
+
+
+</script>
+
+
+{% endblock %}

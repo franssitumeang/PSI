@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% load staticfiles %}
+    <link rel="icon" type="image/jpeg" href="{% static 'images/logos/logo_forum.png'%}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/semantic.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/Semantic-UI-Alert.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css"/>
+    <link rel='stylesheet prefetch'
+          href='https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/icon.min.css'>
+    <script type="text/javascript" src="{% static 'js/jquery-3.1.1.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/semantic.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/Semantic-UI-Alert.js' %}"></script>
+    <title>Admin Page | Forum Mahasiswa</title>
+</head>
+<body>
+<div class="ui menu" style="height: 3.9em !important; border-radius:0px !important;">
+    <div class="ui container">
+        <div class="header item"><img class="logo" src="{% static 'images/logos/5.png'%}" style="width: 2em;">FORUM
+            MAHASISWA
+        </div>
+        <div class="right menu">
+            <a href="/forum/sign_out" class="item">Sign Out</a>
+        </div>
+
+    </div>
+</div>
+<div class="ui main container"><br>
+    <div class="ui grid">
+        <div class="four wide column">
+            <div class="ui vertical fluid tabular menu">
+                <a class="item active" id="dahsboard">Dashboard</a>
+                <a class="item" id="tipe_kategori">Tipe Kategori Topik</a>
+                <a class="item" id="kategori">Kategori Topik</a>
+                <a class="item" id="tipe_notif">Tipe Notifikasi</a>
+            </div>
+        </div>
+        <div class="twelve wide stretched column">
+            <div class="ui segment">
+                <!--DAHSBOARD-->
+                <div id="segment-dashboard">
+                    <h2 class="title-forum2"
+                        style="font-family: 'PT Sans Narrow', sans-serif; text-align: center; font-size: 1.4em;">
+                        The Most Active User who Post Topic</h2>
+                    <div id="chart_user" style="width: 100%; height: 250px;"></div>
+                    <h2 class="title-forum2"
+                        style="font-family: 'PT Sans Narrow', sans-serif; text-align: center; font-size: 1.4em;">
+                        Popular Tag Topic</h2>
+                    <div id="chart_tag" style="width: 100%; height: 250px;"></div>
+
+                </div>
+
+                <!--FORM TIPE KATEGORI-->
+                <div id="form-tipe-kategori" hidden>
+                    <form class="ui form">
+                        <h2 class="title-forum2"
+                            style="font-family: 'PT Sans Narrow', sans-serif; text-align: center; font-size: 1.4em;">
+                            Tambah
+                            Tipe Kategori Topik</h2>
+                        <br>
+                        {% csrf_token %}
+                        <div class="field">
+                            <label>Title tipe kategori</label>
+                            <input name="first-name" placeholder="Title Tipe Kategori" type="text"
+                                   id="title-tipe-kategori">
+                        </div>
+                        <div class="field">
+                            <label>Deskripsi</label>
+                            <textarea placeholder="Deskripsi Tipe Kategori" id="deskripsi-tipe-kategori"></textarea>
+                        </div>
+                        <input type="submit" class="ui orange button" value="Create Tipe Kategori"
+                               id="btn-tipe-kategori"
+                               disabled>
+                    </form>
+                    <table class="ui unstackable table">
+                        <thead>
+                        <tr>
+                            <th>Tipe Kategori</th>
+                            <th>Deskripsi</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for tipe_kategori in all_tipe_kategori%}
+                        <tr>
+                            <td>{{tipe_kategori.nama_kategori}}</td>
+                            <td>{{tipe_kategori.deskripsi_tipe_kategori}}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!--FORM KATEGORI-->
+                <div id="form-kategori" hidden>
+                    <form class="ui form">
+                        <h2 class="title-forum2"
+                            style="font-family: 'PT Sans Narrow', sans-serif; text-align: center; font-size: 1.4em;">
+                            Tambah
+                            Kategori Topik</h2>
+                        <br>
+                        {% csrf_token %}
+                        <div class="field">
+                            <label>Tipe kategori</label>
+                            <select class="ui dropdown" id="tipe-kategori">
+                                <option value="">Select Tipe Kategori</option>
+                                {% for tipe_kategori in all_tipe_kategori %}
+                                <option value="{{tipe_kategori.id_tipe_kategori}}">{{tipe_kategori.nama_kategori}}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label>Kategori</label>
+                            <input name="first-name" placeholder="Title Kategori" type="text" id="title-kategori">
+                        </div>
+                        <div class="field">
+                            <label>Deskripsi</label>
+                            <textarea placeholder="Deskripsi Kategori" id="deskripsi-kategori"></textarea>
+                        </div>
+                        <input type="submit" class="ui orange button" value="Create Kategori" id="btn-kategori"
+                               disabled>
+                    </form>
+                    <table class="ui unstackable table">
+                        <thead>
+                        <tr>
+                            <th>Kategori</th>
+                            <th>Tipe Kategori</th>
+                            <th>Deskripsi</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for kategori in kategori%}
+                        <tr>
+                            <td>{{kategori.judul_kategori}}</td>
+                            <td>{{kategori.id_tipe_kategori.nama_kategori}}</td>
+                            <td>{{kategori.deskripsi_kategori}}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!--FORM TIPE NOTIFIKASI-->
+                <div id="form-notifikasi" hidden>
+                    <form class="ui form">
+                        <h2 class="title-forum2"
+                            style="font-family: 'PT Sans Narrow', sans-serif; text-align: center; font-size: 1.4em;">
+                            Tambah
+                            Tipe Notifikasi</h2>
+                        <br>
+                        {% csrf_token %}
+                        <div class="field">
+                            <label>Title tipe notifikasi</label>
+                            <input name="first-name" placeholder="Title Kategori" type="text" id="title-notifikasi">
+                        </div>
+                        <input type="submit" class="ui orange button" value="Create Tipe Notifikasi" id="btn-notifikasi"
+                               disabled>
+                    </form>
+                    <table class="ui unstackable table">
+                        <thead>
+                        <tr>
+                            <th>Tipe Notifikasi</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for tipe_notif in tipe_notifikasi%}
+                        <tr>
+                            <td>{{tipe_notif.nama_tipe_notifikasi}}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+<script src="{% static 'chart/amcharts.js' %}"></script>
+<script src="{% static 'chart/pie.js' %}"></script>
+<script src="{% static 'chart/export.min.js' %}"></script>
+<link rel="stylesheet" href="{% static 'chart/export.min.js' %}" type="text/css" media="all"/>
+<script src="{% static 'chart/light.js' %}"></script>
+<script>
+    user = {{user | safe}}
+    user_n = {{user_n | safe}}
+    tag = {{tag | safe}}
+    tag_n = {{tag_n | safe}}
+var chart = AmCharts.makeChart( "chart_user", {
+  "type": "pie",
+  "theme": "light",
+  "dataProvider": [ {
+    "user": user[0],
+    "litres": user_n[0]
+  }, {
+    "user": user[1],
+    "litres": user_n[1]
+  }, {
+    "user": user[2],
+    "litres": user_n[2]
+  }, {
+    "user": user[3],
+    "litres": user_n[3]
+  }, {
+    "user": user[4],
+    "litres": user_n[4]
+  },{
+    "user": "Other User",
+    "litres": user_n[5]
+  },],
+  "valueField": "litres",
+  "titleField": "user",
+   "balloon":{
+   "fixedPosition":true
+  },
+  "export": {
+    "enabled": false
+  }
+} );
+var chart = AmCharts.makeChart( "chart_tag", {
+  "type": "pie",
+  "theme": "light",
+  "dataProvider": [ {
+    "tag": tag[0],
+    "litres": tag_n[0]
+  }, {
+    "tag": tag[1],
+    "litres": tag_n[1]
+  }, {
+    "tag": tag[2],
+    "litres": tag_n[2]
+  }, {
+    "tag": tag[3],
+    "litres": tag_n[3]
+  }, {
+    "tag": tag[4],
+    "litres": tag_n[4]
+  },{
+    "tag": tag[5],
+    "litres": tag_n[5]
+  },{
+    "tag": tag[6],
+    "litres": tag_n[6]
+  },{
+    "tag": tag[7],
+    "litres": tag_n[7]
+  },{
+    "tag": tag[8],
+    "litres": tag_n[8]
+  },{
+    "tag": tag[9],
+    "litres": tag_n[9]
+  },{
+    "tag": "Other Tag",
+    "litres": tag_n[10]
+  },],
+  "valueField": "litres",
+  "titleField": "tag",
+   "balloon":{
+   "fixedPosition":true
+  },
+  "export": {
+    "enabled": false
+  }
+} );
+
+
+
+
+
+
+
+</script>
+<script>
+$(".dropdown").dropdown();
+$(document).ready(function(){
+
+    $('#dahsboard').click(function(){
+        $('#segment-dashboard').show();
+        $('#form-kategori').hide();
+        $('#form-tipe-kategori').hide();
+        $('#form-notifikasi').hide();
+
+        $('#dahsboard').attr("class", "item active");
+        $('#tipe_kategori').attr("class", "item");
+        $('#kategori').attr("class", "item");
+        $('#tipe_notif').attr("class", "item");
+    });
+    $('#tipe_kategori').click(function(){
+        $('#segment-dashboard').hide();
+        $('#form-kategori').hide();
+        $('#form-tipe-kategori').show();
+        $('#form-notifikasi').hide();
+
+        $('#dahsboard').attr("class", "item");
+        $('#tipe_kategori').attr("class", "item active");
+        $('#kategori').attr("class", "item");
+        $('#tipe_notif').attr("class", "item");
+    });
+    $('#kategori').click(function(){
+        $('#segment-dashboard').hide();
+        $('#form-kategori').show();
+        $('#form-tipe-kategori').hide();
+        $('#form-notifikasi').hide();
+
+        $('#dahsboard').attr("class", "item");
+        $('#tipe_kategori').attr("class", "item");
+        $('#kategori').attr("class", "item active");
+        $('#tipe_notif').attr("class", "item");
+    });
+    $('#tipe_notif').click(function(){
+        $('#segment-dashboard').hide();
+        $('#form-kategori').hide();
+        $('#form-tipe-kategori').hide();
+        $('#form-notifikasi').show();
+
+        $('#dahsboard').attr("class", "item");
+        $('#tipe_kategori').attr("class", "item");
+        $('#kategori').attr("class", "item");
+        $('#tipe_notif').attr("class", "item active");
+    });
+
+    <!--FUNC TIPE KATEGORI-->
+    $func_tipe_kategori = function($a, $b){
+        if($a != "" && $b != ""){
+            $('#btn-tipe-kategori').prop('disabled',false);
+        }
+        else{
+             $('#btn-tipe-kategori').prop('disabled',true);
+        }
+    }
+    $('#title-tipe-kategori').on('keyup',function(){
+        $deskripsi = $('#deskripsi-tipe-kategori').val();
+        $func_tipe_kategori($deskripsi, $(this).val())
+    });
+    $('#deskripsi-tipe-kategori').on('keyup',function(){
+        $title = $('#title-tipe-kategori').val();
+        $func_tipe_kategori($title, $(this).val())
+    });
+    $(document).on('submit', '#form-tipe-kategori', function(e){
+         e.preventDefault();
+         $.ajax({
+            type: 'POST',
+            url: '/forum/admin/create_tipe_kategori',
+            data: {
+                nama_kategori : $('#title-tipe-kategori').val(),
+                deskripsi_tipe_kategori : $('#deskripsi-tipe-kategori').val(),
+                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success:function(m){
+                $.uiAlert({
+                    textHead: 'Success!', // header
+                    text: '<b>Tipe Kategori</b> has been created', // Text
+                    bgcolor: '#19c3aa', // background-color
+                    textcolor: '#fff', // color
+                    position: 'top-center',// position . top And bottom ||  left / center / right
+                    icon: 'checkmark box', // icon in semantic-UI
+                    time: 4, // time
+                });
+                $('#tipe-kategori').append("<option value="+m+">"+$('#title-tipe-kategori').val()+"</option>");
+                $('#title-tipe-kategori').val("");
+                $('#deskripsi-tipe-kategori').val("");
+                $('#btn-tipe-kategori').prop('disabled',true);
+            },
+            error:function(m){
+
+            }
+        });
+    });
+
+    <!--FUNC KATEGORI-->
+    $func_kategori = function($a, $b, $c){
+        if($a != "" && $b != "" && $c != ""){
+            $('#btn-kategori').prop('disabled',false);
+        }
+        else{
+             $('#btn-kategori').prop('disabled',true);
+        }
+    }
+    $('#title-kategori').on('keyup',function(){
+        $deskripsi = $('#deskripsi-kategori').val();
+        $tipe = $('#tipe-kategori').val();
+        $func_kategori($deskripsi, $(this).val(), $tipe);
+    });
+    $('#deskripsi-kategori').on('keyup',function(){
+        $title = $('#title-kategori').val();
+        $tipe = $('#tipe-kategori').val();
+        $func_kategori($title, $(this).val(), $tipe);
+    });
+    $('#tipe-kategori').on('change',function(){
+         $title = $('#title-kategori').val();
+         $deskripsi = $('#deskripsi-kategori').val();
+         $func_kategori($title, $(this).val(), $deskripsi);
+    });
+    $(document).on('submit', '#form-kategori', function(e){
+         e.preventDefault();
+         $.ajax({
+            type: 'POST',
+            url: '/forum/admin/create_kategori',
+            data: {
+                id_tipe_kategori : $('#tipe-kategori').val(),
+                judul_kategori : $('#title-kategori').val(),
+                deskripsi_kategori : $('#deskripsi-kategori').val(),
+                csrfmiddlewaretoken : $('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success:function(m){
+                $.uiAlert({
+                    textHead: 'Success!', // header
+                    text: '<b>Kategori</b> has been created', // Text
+                    bgcolor: '#19c3aa', // background-color
+                    textcolor: '#fff', // color
+                    position: 'top-center',// position . top And bottom ||  left / center / right
+                    icon: 'checkmark box', // icon in semantic-UI
+                    time: 4, // time
+                });
+                $('#title-kategori').val("");
+                $('#deskripsi-kategori').val("");
+                $('#btn-kategori').prop('disabled',true);
+            },
+            error:function(m){
+
+            }
+        });
+    });
+
+
+
+    <!--FUNC TIPE NOTIFIKASI-->
+    $func_notifikasi = function($a){
+        if($a != ""){
+            $('#btn-notifikasi').prop('disabled',false);
+        }
+        else{
+             $('#btn-notifikasi').prop('disabled',true);
+        }
+    }
+    $('#title-notifikasi').on('keyup',function(){
+        $func_notifikasi($(this).val());
+    });
+    $(document).on('submit', '#form-notifikasi', function(e){
+         e.preventDefault();
+         $.ajax({
+            type: 'POST',
+            url: '/forum/admin/create_tipe_notifikasi',
+            data: {
+                nama_tipe_notifikasi : $('#title-notifikasi').val(),
+                csrfmiddlewaretoken : $('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success:function(m){
+                $.uiAlert({
+                    textHead: 'Success!', // header
+                    text: '<b>Tipe Notifikasi</b> has been created', // Text
+                    bgcolor: '#19c3aa', // background-color
+                    textcolor: '#fff', // color
+                    position: 'top-center',// position . top And bottom ||  left / center / right
+                    icon: 'checkmark box', // icon in semantic-UI
+                    time: 4, // time
+                });
+                $('#title-notifikasi').val("");
+                $('#btn-notifikasi').prop('disabled',true);
+            },
+            error:function(m){
+
+            }
+        });
+    });
+});
+
+
+
+
+
+
+
+</script>
+</html>

@@ -1,0 +1,188 @@
+{% extends 'Layout.html' %}
+{% block title %}
+Forum Mahasiswa
+{% endblock %}
+
+{% block content %}
+{% load staticfiles %}
+<div class="ui main container">
+    <h2 class="title-kategori">TOP TOPICS</h2><br>
+    {% if email_login %}
+    <a class="ui button green right floated labeled icon" href="/forum/topic/create" id="btn"
+       style="margin-bottom: -2em;"><i
+            class="write icon"></i>Create New
+        Topic</a>
+    {% endif %}
+    <div class="ui top attached tabular menu">
+        {% if email_login %}
+        <a class="active item" data-tab="recommended">Recommended</a>
+        <a class="item" data-tab="trending">Trending</a>
+        <a class="item" data-tab="latest">Latest</a>
+        {% else %}
+        <a class="active item" data-tab="trending">Trending</a>
+        <a class="item" data-tab="latest">Latest</a>
+        {% endif %}
+    </div>
+    {% if email_login %}
+    <div class="ui bottom attached active tab segment" data-tab="recommended">
+        <div class="ui internally celled grid ">
+            {% for topic in recommended_topic %}
+            <div class="row">
+                <div class="three wide column">
+                    <img class="ui avatar image" src="/static/images/avatar_user/{{topic.topic.email.avatar_user}}"><a
+                        class="name" href="/forum/user/view/{{topic.topic.email.email}}">{{topic.topic.email.full_name | truncatechars:24}}</a>
+                    <div class="ui grid">
+                        <div class="eight wide column">
+                            <p class="date">{{topic.topic.date_created_topik | date}}</p>
+                        </div>
+                        <div class="eight wide column">
+                            <p class="comment"><i class="comments outline icon"></i>{{topic.topic.jumlah_komentar_topik}} comments</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="twelve wide column">
+                    <a class="topic" href="/forum/topic/view/{{topic.id_hash}}">{{topic.topic.judul_topik}}</a>
+                    <div style="margin-top: 7px; margin-bottom: -5px;">
+                        {% for tag in topic.tags %}
+                        <label class="ui label">{{tag}}</label>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="ui bottom attached tab segment" data-tab="trending">
+        <div class="ui internally celled grid ">
+            {% for topic in trending_topic %}
+            <div class="row">
+                <div class="three wide column">
+                    <img class="ui avatar image" src="/static/images/avatar_user/{{topic.topic.email.avatar_user}}"><a
+                        class="name" href="/forum/user/view/{{topic.topic.email.email}}">{{topic.topic.email.full_name | truncatechars:24}}</a>
+                    <div class="ui grid">
+                        <div class="eight wide column">
+                            <p class="date">{{topic.topic.date_created_topik | date}}</p>
+                        </div>
+                        <div class="eight wide column">
+                            <p class="comment"><i class="comments outline icon"></i>{{topic.topic.jumlah_komentar_topik}} comments</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="twelve wide column">
+                    <a class="topic" href="/forum/topic/view/{{topic.id_hash}}">{{topic.topic.judul_topik}}</a>
+                    <div style="margin-top: 7px; margin-bottom: -5px;">
+                        {% for tag in topic.tags %}
+                        <label class="ui label">{{tag}}</label>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="ui bottom attached tab segment" data-tab="latest">
+        <div class="ui internally celled grid ">
+            {% for topic in latest_topic %}
+            <div class="row">
+                <div class="three wide column">
+                    <img class="ui avatar image" src="/static/images/avatar_user/{{topic.topic.email.avatar_user}}"><a
+                        class="name" href="/forum/user/view/{{topic.topic.email.email}}">{{topic.topic.email.full_name | truncatechars:24}}</a>
+                    <div class="ui grid">
+                        <div class="eight wide column">
+                            <p class="date">{{topic.topic.date_created_topik | date}}</p>
+                        </div>
+                        <div class="eight wide column">
+                            <p class="comment"><i class="comments outline icon"></i>{{topic.topic.jumlah_komentar_topik}} comments</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="twelve wide column">
+                    <a class="topic" href="/forum/topic/view/{{topic.id_hash}}">{{topic.topic.judul_topik}}</a>
+                    <div style="margin-top: 7px; margin-bottom: -5px;">
+                        {% for tag in topic.tags %}
+                        <label class="ui label">{{tag}}</label>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    <div class="ui bottom attached active tab segment" data-tab="trending">
+        <div class="ui internally celled grid ">
+            {% for topic in trending_topic %}
+            <div class="row">
+                <div class="three wide column">
+                    <img class="ui avatar image" src="/static/images/avatar_user/{{topic.topic.email.avatar_user}}"><a
+                        class="name" href="/forum/user/view/{{topic.topic.email.email}}">{{topic.topic.email.full_name | truncatechars:24}}</a>
+                    <div class="ui grid">
+                        <div class="eight wide column">
+                            <p class="date">{{topic.topic.date_created_topik | date}}</p>
+                        </div>
+                        <div class="eight wide column">
+                            <p class="comment"><i class="comments outline icon"></i>{{topic.topic.jumlah_komentar_topik}} comments</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="twelve wide column">
+                    <a class="topic" href="/forum/topic/view/{{topic.id_hash}}">{{topic.topic.judul_topik}}</a>
+                    <div style="margin-top: 7px; margin-bottom: -5px;">
+                        {% for tag in topic.tags %}
+                        <label class="ui label">{{tag}}</label>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="ui bottom attached tab segment" data-tab="latest">
+        <div class="ui internally celled grid ">
+            {% for topic in latest_topic %}
+            <div class="row">
+                <div class="three wide column">
+                    <img class="ui avatar image" src="/static/images/avatar_user/{{topic.topic.email.avatar_user}}"><a
+                        class="name" href="/forum/user/view/{{topic.topic.email.email}}">{{topic.topic.email.full_name | truncatechars:24}}</a>
+                    <div class="ui grid">
+                        <div class="eight wide column">
+                            <p class="date">{{topic.topic.date_created_topik | date}}</p>
+                        </div>
+                        <div class="eight wide column">
+                            <p class="comment"><i class="comments outline icon"></i>{{topic.topic.jumlah_komentar_topik}} comments</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="twelve wide column">
+                    <a class="topic" href="/forum/topic/view/{{topic.id_hash}}">{{topic.topic.judul_topik}}</a>
+                    <div style="margin-top: 7px; margin-bottom: -5px;">
+                        {% for tag in topic.tags %}
+                        <label class="ui label">{{tag}}</label>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script>
+$('.menu .item')
+  .tab()
+;
+$(document).ready(function(){
+ });
+
+
+
+</script>
+
+
+{% endblock %}

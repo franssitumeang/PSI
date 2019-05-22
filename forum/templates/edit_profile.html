@@ -1,0 +1,312 @@
+{% extends 'Layout.html' %}
+{% block title %}
+Edit Profile {{user.full_name}} | Forum Mahasiswa
+{% endblock %}
+
+{% block content %}
+{% load staticfiles %}
+<div class="ui main container">
+    <h1 class="title-kategori">Edit Profile</h1>  <br>
+    <div class="ui grid">
+        <div class="three wide column">
+            <a data-tooltip="Edit avatar image" style="cursor:pointer;" id="btn_img"
+               class="ui small image">
+                <img src="/static/images/avatar_user/{{user.avatar_user}}" style="border-radius:3px;" id="img_view">
+            </a>
+            <div style="display:none" id="select_img"><br>
+                <span style="font-family: 'Quicksand', sans-serif;">Select avatar</span><br>
+                <i class="post">(courtesy of semantic-ui.com)</i>
+                <div>
+                    <img class="ui avatar image avatar_img" style="border-radius:1px;"
+                         src="/static/images/avatar_user/user_1.jpg" id="img_1">
+                    <img class="ui avatar image avatar_img" style="border-radius:1px;"
+                         src="/static/images/avatar_user/user_2.jpg" id="img_2">
+                    <img class="ui avatar image avatar_img" style="border-radius:1px;"
+                         src="/static/images/avatar_user/user_3.jpg" id="img_3">
+                    <img class="ui avatar image avatar_img" style="border-radius:1px;"
+                         src="/static/images/avatar_user/user_4.png" id="img_4">
+                    <img class="ui avatar image avatar_img" style="border-radius:1px;"
+                         src="/static/images/avatar_user/user_5.png" id="img_5">
+                </div>
+                <div style="margin-top:5px;">
+                    <img class="ui avatar image avatar_img" style="border-radius:1px;"
+                         src="/static/images/avatar_user/user_6.jpg" id="img_6">
+                    <img class="ui avatar image avatar_img" style="border-radius:1px;"
+                         src="/static/images/avatar_user/user_7.jpg" id="img_7">
+                    <img class="ui avatar image avatar_img" style="border-radius:1px;"
+                         src="/static/images/avatar_user/user_8.jpg" id="img_8">
+                    <img class="ui avatar image avatar_img" style="border-radius:1px;"
+                         src="/static/images/avatar_user/user_9.jpg" id="img_9">
+                    <img class="ui avatar image avatar_img" style="border-radius:1px;"
+                         src="/static/images/avatar_user/user_10.jpg" id="img_10">
+                </div>
+            </div>
+        </div>
+        <div class="six wide column">
+            <h4 style="font-family: 'Quicksand', sans-serif;">{{user.email}}</h4>
+            <span style="font-family: 'Quicksand', sans-serif;">Full Name <a><i style="cursor:pointer;"
+                                                                                class="ui icon edit" id="btn_name"></i></a></span>
+            <h4 style="font-family: 'Quicksand', sans-serif; margin-top:-3px;" id="label_name">{{user.full_name}}</h4>
+            <div class=" ui form field" id="field_name" style="display:none; margin-top:-10px;">
+                <input id="input_name" value="{{user.full_name}}" type="text">
+            </div>
+            <span style="font-family: 'Quicksand', sans-serif;">Club <a><i style="cursor:pointer;" class="ui icon edit"
+                                                                           id="btn_club"></i></a></span>
+            <h4 style="font-family: 'Quicksand', sans-serif; margin-top:-3px;" id="label_club">{{user.klub}}</h4>
+            <div class="ui form" id="field_club" style="display:none; margin-top:-10px;">
+                <div class="field">
+                    <select class="ui dropdown" id="select_club">
+                        <option value="">Select Club</option>
+                        {% for c in club %}
+                        <option value="{{c.judul_kategori}}">{{c.judul_kategori}}</option>
+                        {% endfor %}
+                        <option value="None">None Club</option>
+                    </select>
+                </div>
+            </div>
+            <a href="/forum/user/change_password/{{email_hash}}" class="ui blue label">Change Password</a>
+        </div>
+        <div class="seven wide column">
+            <span style="font-family: 'Quicksand', sans-serif;">Faculty</span>
+            <h4 style="font-family: 'Quicksand', sans-serif; margin-top:-3px;">{{user.fakultas}}</h4>
+            <span style="font-family: 'Quicksand', sans-serif;">Major</span>
+            <h4 style="font-family: 'Quicksand', sans-serif; margin-top:-3px;">{{user.jurusan}}</h4>
+            <span style="font-family: 'Quicksand', sans-serif;">Joined at</span>
+            <h4 style="font-family: 'Quicksand', sans-serif; margin-top:-3px;">{{user.date_created_user | date}}</h4>
+        </div>
+    </div>
+    <div class="ui grid">
+        <div class="four wide column">
+            <h2 class="title-kategori">Subscribers ({{ all_subscibers |length }})</h2>
+            <div class="ui middle aligned selection list">
+                {% for user in all_subscibers %}
+                <a class="item" href="/forum/user/view/{{user.email}}">
+                    <img class="ui avatar image" src="/static/images/avatar_user/{{user.avatar_user}}">
+                    <div class="content">
+                        <div style="font-family: 'Exo', sans-serif; color: #4183C4;">{{user.full_name}}</div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="four wide column">
+            <h2 class="title-kategori">My Groups (<span id="label_grup">{{ my_groups |length }}</span>)</h2>
+            <div class="ui middle aligned selection list">
+                {% for grup in my_groups %}
+                <div id="grup_{{grup.id_grup}}">
+                    <img class="ui avatar image" style="margin-bottom:5px;"
+                         src="/static/images/avatar_group/{{grup.avatar_grup}}">
+                    <a href="/forum/group/edit/{{grup.id_grup}}" style="font-family: 'Exo', sans-serif;">{{grup.nama_grup | truncatechars:27}}</a>
+                    <button class="ui red label" style="float:right;" id="delete_{{grup.id_grup}}">Delete</button>
+                    <br>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="eight wide column">
+            <h2 class="title-kategori">My Topics (<span id="label_topic">{{ c_topic |length }}</span>)</h2>
+            <div class="ui middle aligned selection list">
+                {% for topic in c_topic %}
+                <div class="ui grid" style="margin-bottom:-35px;" id="topic_{{topic.topic.id_topik}}">
+                    <div class="fourteen wide column">
+                        <a href="/forum/topic/view/{{topic.id_hash}}"
+                           style="font-family: 'Exo', sans-serif; font-size: 1.2em;">{{topic.topic.judul_topik}}</a>
+                    </div>
+                    <div class="two wide column">
+                        <button class="ui red label" style="float:right;" id="delete_topik_{{topic.topic.id_topik}}">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+
+<script>
+$(".dropdown").dropdown();
+$(document).ready(function(){
+    $func_update_img = function(img){
+         $.ajax({
+            type: 'POST',
+            url: '/forum/update_avatar_user',
+            data: {
+                img : img,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success:function(m){
+                $('#img_view').attr("src", "/static/images/avatar_user/"+img);
+            },
+            error:function(m){
+
+            }
+        });
+    }
+
+    $('#btn_img').on('click',function(){
+        $('#select_img').show();
+    });
+
+    $('#img_1').on('click',function(){
+        $func_update_img("user_1.jpg");
+    })
+     $('#img_2').on('click',function(){
+        $func_update_img("user_2.jpg");
+    })
+     $('#img_3').on('click',function(){
+        $func_update_img("user_3.jpg");
+    })
+     $('#img_4').on('click',function(){
+        $func_update_img("user_4.png");
+    })
+     $('#img_5').on('click',function(){
+        $func_update_img("user_5.png");
+    })
+     $('#img_6').on('click',function(){
+        $func_update_img("user_6.jpg");
+    })
+     $('#img_7').on('click',function(){
+        $func_update_img("user_7.jpg");
+    })
+     $('#img_8').on('click',function(){
+        $func_update_img("user_8.jpg");
+    })
+     $('#img_9').on('click',function(){
+        $func_update_img("user_9.jpg");
+    })
+     $('#img_10').on('click',function(){
+        $func_update_img("user_10.jpg");
+    })
+
+    $('#btn_name').on('click',function(){
+        $('#field_name').show();
+    })
+    $('#btn_club').on('click',function(){
+        $('#field_club').show();
+    })
+     $('#input_name').keypress(function(e){
+          if ( e.which == 13 ) {
+            $func_update_name($(this).val());
+          }
+    })
+    $('#select_club').on('change',function(){
+        $func_update_club($(this).val());
+    })
+     $func_update_name = function(name){
+         $.ajax({
+            type: 'POST',
+            url: '/forum/update_name_user',
+            data: {
+                name : name,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success:function(m){
+                $('#label_name').text(name);
+                $('#field_name').hide();
+            },
+            error:function(m){
+
+            }
+        });
+    }
+    $func_update_club = function(club){
+         $.ajax({
+            type: 'POST',
+            url: '/forum/update_club_user',
+            data: {
+                club : club,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success:function(m){
+                $('#label_club').text(club);
+                $('#field_club').hide();
+            },
+            error:function(m){
+
+            }
+        });
+    }
+
+    $id_grups = {{id_grups | safe }}
+    $.each($id_grups, function( index, value ) {
+        $('#delete_'+value).on('click',function(){
+            $func_delete_grup(value);
+        })
+    });
+
+    $func_delete_grup = function(id_grup){
+         $.ajax({
+            type: 'POST',
+            url: '/forum/delete_grup',
+            data: {
+                id_grup : id_grup,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success:function(m){
+                $('#grup_'+id_grup).hide();
+                $n = $('#label_grup').text();
+                $('#label_grup').text(""+$n-1);
+            },
+            error:function(m){
+
+            }
+        });
+    }
+
+    $id_topic = {{id_topics | safe }};
+    $.each($id_topic, function( index, value ) {
+        $('#delete_topik_'+value).on('click',function(){
+            $func_delete_topic(value);
+        })
+    });
+     $func_delete_topic = function(id_topic){
+         $.ajax({
+            type: 'POST',
+            url: '/forum/delete_topic',
+            data: {
+                id_topic : id_topic,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success:function(m){
+                $('#topic_'+id_topic).hide();
+                $n = $('#label_topic').text();
+                $('#label_topic').text(""+$n-1);
+            },
+            error:function(m){
+
+            }
+        });
+    }
+
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+
+{% endblock %}

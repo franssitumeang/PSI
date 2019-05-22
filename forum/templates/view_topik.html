@@ -1,0 +1,142 @@
+{% extends 'Layout.html' %}
+{% block title %}
+{{topik.judul_topik}} | Forum Mahasiswa
+{% endblock %}
+
+{% block content %}
+{% load staticfiles %}
+<div class="ui main container">
+    <div class="ui grid">
+        <div class="eleven wide column">
+            {% if kategori %}
+            <div class="ui labeled button right floated" tabindex="0">
+                <div class="ui orange button">Category</div>
+                <a href="#" class="ui basic left pointing label">
+                    {{kategori.judul_kategori}}
+                </a>
+            </div>
+            {% else %}
+            <div class="ui labeled button right floated" tabindex="0">
+                <div class="ui orange button">Grup</div>
+                <a href="#" class="ui basic left pointing label">
+                    {{grup.nama_grup}}
+                </a>
+            </div>
+            {% endif %}
+            <img class="ui avatar image" src="/static/images/avatar_user/{{user.avatar_user}}"
+                 style="border-radius: 2px !important">
+            <a href="/forum/user/view/{{user.email}}" style="font-family: 'Exo', sans-serif; font-size: 1.2em;">{{user.full_name}}</a><br>
+            <span class="date">Created at {{topik.date_created_topik | date}}</span>
+            <h1>{{topik.judul_topik}}</h1>
+            <div>{{topik.isi_topik | safe}}</div>
+            <br>
+            {% for tag in tags %}
+            <label class="ui label" >{{tag}}</label>
+            {% endfor %}
+            <button class="circular ui icon red button fixed-btn-comment" id="btn_fix_comment" data-tooltip="give your comment">
+                <i class="icon comment"></i>
+            </button>
+            <h3 class="ui dividing header" id="jlh_komen">{{all_komentar | length }} Comments</h3>
+
+            <div>
+                {% for k in all_komentar %}
+                <img class="ui avatar image" src="/static/images/avatar_user/{{k.user.avatar_user}}">
+                <a href="/forum/user/view/{{k.user.email}}"
+                   style="font-family: 'Exo', sans-serif;">{{k.user.full_name}}</a>
+                <span class="date">&nbsp;&nbsp;&nbsp;Commented at {{k.comment.date_created_komentar | date}}</span>
+                <div style="margin-left:40px;">{{k.comment.isi_komentar | safe}}</div>
+                <div class="ui divider"></div>
+                {% endfor %}
+            </div>
+            <div id="data"></div>
+            <div class="field" id="text_area">
+                <h4>Add your comment</h4>
+                <textarea id="comment"></textarea>
+            </div>
+            <br>
+            <input type="submit" value="Post Reply" id="btn_comment" class="ui button primary">
+        </div>
+        <div class="five wide column">
+            {% if all_related_topic %}
+            <p class="title-kategori" style="font-size:1.3em;">Related Topics</p>
+            {% for topic in all_related_topic %}
+             <a href="/forum/topic/view/{{topic.id_hash}}" class="related-link">{{topic.judul_topic}}</a>
+            {% endfor %}
+            {% endif %}
+        </div>
+
+    </div>
+    <input type="hidden" value="{{topik.id_topik}}" id="id_topik">
+    <input type="hidden" value="{{user_login.email}}" id="email_login">
+
+
+</div>
+{% endblock %}
+{% block script %}
+<script type="text/javascript" src="{% static 'js/tinymce/jquery.tinymce.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/tinymce/tinymce.min.js' %}"></script>
+<script type="text/javascript">
+
+
+socket = new WebSocket("ws://" + window.location.host + "/chat" + $('#id_topik').val());
+$(document).ready(function(){
+    tinymce.init({
+            selector: "#comment",
+            height: 150,
+            menubar: true,
+            plugins: [
+             "advlist autolink lists link image charmap print preview anchor",
+              "searchreplace visualblocks code fullscreen",
+              "insertdatetime media table contextmenu paste code"
+            ],
+            toolbar: "undo redo | insert | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image",
+            forced_root_block : ""
+
+    });
+    $('#btn_fix_comment').on('click',function(){
+        $('html, body').animate({
+            scrollTop: $("#text_area").offset().top
+        }, 500);
+        tinymce.execCommand('mceFocus',false,'comment');
+        $('#comment').focus();
+    });
+    $('#btn_comment').on('click',function(){
+        tinyMCE.triggerSave();
+        comment = $('#comment').val();
+        if(comment != ""){
+            $m = {
+                id_topik : $('#id_topik').val(),
+                isi_komentar : comment,
+                email : $('#email_login').val()
+            }
+            socket.send(JSON.stringify($m));
+            $(tinymce.get('comment').getBody()).html('');
+        }else{
+           $.uiAlert({
+                textHead: 'Enter your comment!', // header
+                text: '', // Text
+                bgcolor: '#F2711C', // background-color
+                textcolor: '#fff', // color
+                position: 'top-center',// position . top And bottom ||  left / center / right
+                icon: 'warning sign', // icon in semantic-UI
+                time: 3, // time
+           })
+        }
+
+    });
+
+     socket.onmessage = function(e) {
+        $data = JSON.parse(e.data);
+        <!--$('#data').append(+' '++++'<br>');-->
+        $('#data').append("<img class='ui avatar image' src='/static/images/avatar_user/"+$data.avatar+"'>"+
+                            "<a href='/forum/user/view/"+$data.email+"' style='font-family: Exo, sans-serif;'>"+$data.name+"</a>"+
+                            "<span class='date'>&nbsp;&nbsp;&nbsp;Commented at"+$data.date+"</span>"+
+                            "<div style='margin-left:40px;'>"+$data.komentar+"</div>"+"<div class='ui divider'></div>");
+        $('#jlh_komen').text($data.jumlah_komen+" Comments")
+     }
+     if (socket.readyState == WebSocket.OPEN) socket.onopen();
+});
+</script>
+
+
+{% endblock %}

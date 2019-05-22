@@ -1,0 +1,102 @@
+@import url('https://fonts.googleapis.com/css?family=PT+Sans+Narrow|Rajdhani|Exo|Oxygen|Quicksand');
+.title-kategori{
+    font-family: 'PT Sans Narrow', sans-serif;
+    padding-bottom: 0.21428571rem;
+    border-bottom: 1px solid rgba(30, 30, 800, 0.15);
+}
+
+.title-forum1{
+    font-weight: bold;
+    font-size: 1.1em;
+    margin-left: -23px;
+}
+.title-forum2{
+    font-weight: bold;
+    font-size: 1.1em;
+    color: #e67300;
+}
+.date{
+    font-size: 12px;
+    font-family: 'Rajdhani', sans-serif;
+}
+.comment{
+    font-size: 11px;
+    font-family: 'Rajdhani', sans-serif;
+}
+.name{
+    font-family: 'Exo', sans-serif;
+}
+.post{
+    font-family: 'Rajdhani', sans-serif;
+}
+a.topic{
+    font-family: 'Exo', sans-serif;
+    color: #2185D0 !important;
+    font-size: 1.2em;
+}
+a.topic:hover{
+    color: #1678c2 !important;
+}
+a.topic-read{
+    font-family: 'Exo', sans-serif;
+    color: #8000ff !important;
+    font-size: 1.2em;
+}
+a.topic-read:hover{
+    color: #f26202 !important;
+}
+.side-menu{
+    font-family: 'Rajdhani', sans-serif !important;
+}
+.side-menu-link{
+    font-family: 'Exo', sans-serif !important;
+    color: #331a00 !important;
+}
+.side-menu-link > a{
+    font-family: 'Exo', sans-serif !important;
+    color: #331a00 !important;
+}
+
+.related-link{
+    font-family: 'Oxygen', sans-serif;
+    display: block;
+    margin-bottom: 0.6em;
+}
+.fixed-btn-comment{
+    position: fixed;
+    top: 90%;
+    right: 3%;
+    z-index: 1;
+}
+.avatar_img{
+    cursor:pointer;
+    border-radius:5px;
+    -webkit-filter: blur(3px);
+	filter: blur(0.8px);
+	-webkit-transition: .3s ease-in-out;
+	transition: .2s ease-in-out;
+}
+.avatar_img:hover{
+    -webkit-filter: blur(0);
+	filter: blur(0);
+}
+.slogan1{
+    font-family: 'Quicksand', sans-serif;
+    font-size: 5em;
+    letter-spacing: 11px;
+    margin-bottom:-50px;
+    margin-left:8px;
+}
+.slogan2{
+    font-family: 'Quicksand', sans-serif;
+    font-size: 6em;
+    color: #e67300;
+
+}
+.slogan3{
+    font-family: 'Quicksand', sans-serif;
+    font-size: 4em;
+    margin-top:-45px;
+    margin-left:8px;
+    letter-spacing: 10.5px;
+}

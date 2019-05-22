@@ -1,0 +1,155 @@
+{% extends 'Layout.html' %}
+{% block title %}
+Create New Topic | Forum Mahasiswa
+{% endblock %}
+
+{% block content %}
+{% load staticfiles %}
+<div class="ui main container">
+    <h2 class="title-kategori">CREATE NEW TOPIC</h2><br>
+    <form action="/forum/topic/create" method="post">
+        {% csrf_token %}
+        <div class="ui form">
+            <div class="field">
+                <h4>Title Topic</h4>
+                <input type="text" style="font-size: 1.2em; font-weight: bold !important;" id="title"
+                       placeholder="ketik judul disini" autocomplete="off" name="title">
+            </div>
+            <br>
+            <div class="ui buttons" style="margin-bottom: 13px;">
+                <button class="ui button" id="btn-kategori">Category</button>
+                <div class="or"></div>
+                <button class="ui button" id="btn-grup">Group</button>
+            </div>
+
+            <div class="field" id="field-kategori" hidden>
+                <span class="comment"
+                      style="font-size:1.3em; color: #7a7a52;">Topik dapat dilihat oleh semua pengguna</span>
+                <select class="" id="data-kategori" name="data-kategori">
+                    <option value="">Pilih Kategori</option>
+                    {% for tipe_kategori in all_kategori %}
+                    <optgroup label="{{tipe_kategori.tipe_kategori.nama_kategori}}">
+                        {% for kategori in tipe_kategori.all_kategori %}
+                        <option value="{{kategori.id_kategori}}">{{kategori.judul_kategori}}</option>
+                        {% endfor %}
+                    </optgroup>
+                    {% endfor %}
+                </select>
+
+            </div>
+            <div class="field" id="field-grup" hidden>
+                <span class="comment" style="font-size:1.3em; color: #7a7a52;">Topik hanya dapat dilihat oleh anggota grup saja</span>
+                <select class="" id="data-grup" name="data-grup">
+                    <option value="">Pilih Group</option>
+                    <optgroup label="My Group">
+                        {% for grup in my_grup %}
+                        <option value="{{grup.id_grup}}">{{grup.nama_grup}}</option>
+                        {% endfor %}
+                    </optgroup>
+                    <optgroup label="Joined Group">
+                        {% for grup in joined_grup %}
+                        <option value="{{grup.id_grup}}">{{grup.nama_grup}}</option>
+                        {% endfor %}
+                    </optgroup>
+                </select>
+            </div>
+            <div class="field">
+                <h4>Content</h4>
+                <textarea id="content" name="content"></textarea>
+            </div>
+            <div class="field">
+                <h4>Tags</h4>
+                <span class="comment" style="font-size:1.3em; color: #7a7a52;">Masukkan kata-kata kunci yang digunakan di dalam topic. <b>Berilah tanda koma (,)</b> untuk memisahkan kata kunci satu dengan yang lainnya</span>
+                <select id="tags" multiple="" class="ui search fluid dropdown">
+                    {% for tag in all_tag %}
+                    <option value="{{tag}}">{{tag}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <input type="hidden" name="data-tag" id="data-tag">
+            <input type="submit" value="Post Topic and View" id="btn-submit" class="ui button primary" disabled>
+        </div>
+    </form>
+</div>
+{% endblock %}
+{% block script %}
+<script type="text/javascript" src="{% static 'js/tinymce/jquery.tinymce.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/tinymce/tinymce.min.js' %}"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+    $('.ui.dropdown').dropdown({
+        allowAdditions: true,
+    });
+    tinymce.init({
+            selector: "#content",
+            height: 300,
+            menubar: true,
+            plugins: [
+              "advlist autolink lists link image charmap print preview anchor",
+              "searchreplace visualblocks code fullscreen",
+              "insertdatetime media table contextmenu paste code"
+            ],
+            toolbar: "preview | undo redo | insert | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image",
+            forced_root_block : ""
+    });
+    $func_btn = function($btn_a, $btn_b, $field_a, $field_b, $data){
+           $btn_a.attr("class", "ui button active");
+           $btn_b.attr("class", "ui button");
+           $field_a.show();
+           $field_b.hide();
+           $data.val("");
+    }
+    $func_valid_topik = function(){
+        $a = $('#title').val();
+        $b1 = $('#data-kategori').val();
+        $b2 = $('#data-grup').val();
+        if($a != "" && ($b1 != "" || $b2 != "")){
+            $('#btn-submit').prop('disabled', false);
+        }
+        else{
+            $('#btn-submit').prop('disabled', true);
+        }
+    }
+    $('#btn-kategori').click(function(e){
+        e.preventDefault();
+        $('#data-grup').val("");
+        $func_valid_topik();
+        $func_btn($(this), $('#btn-grup'), $('#field-kategori'), $('#field-grup'), $('#data-grup'));
+    });
+    $('#btn-grup').click(function(e){
+        e.preventDefault();
+        $('#data-kategori').val("");
+        $func_valid_topik();
+        $func_btn($(this), $('#btn-kategori'), $('#field-grup'), $('#field-kategori'), $('#data-kategori'));
+    });
+    $('#title').on('keyup',function(){
+        $func_valid_topik();
+    });
+    $('#data-kategori').on('click',function(){
+        $func_valid_topik();
+    });
+    $('#data-grup').on('click',function(){
+        $func_valid_topik();
+    });
+    $('#tags').on('change',function(){
+        $('#data-tag').val($(this).val());
+    });
+
+
+
+});
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+
+{% endblock %}

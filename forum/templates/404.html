@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% load staticfiles %}
+    <title>404 Not Found | Forum Mahasiswa</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/semantic.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css?{% now 'U' %}"/>
+    <style type="text/css">
+      body {
+        background-color: #FFFFFF;
+      }
+      .ui.menu .item img.logo {
+        margin-right: 1.5em;
+      }
+      .main.container {
+        margin-top: 6em;
+        margin-bottom: 7em;
+      }
+      .wireframe {
+        margin-top: 2em;
+      }
+      .ui.footerman.segment {
+        margin: 5em 0em 0em;
+        padding: 5em 0em;
+      }
+    </style>
+</head>
+<body>
+<div class="ui fixed menu"
+     style="height: 3.9em !important; border-top: solid #e67300 !important; border-top-width: 1px !important;">
+    <div class="ui container">
+        <a href="/forum" class="header item">
+            <img class="logo" src="{% static 'images/logos/5.png'%}" style="width: 2em;">
+            <span class="title-forum1">FORUM&nbsp;</span><span class="title-forum2">MAHASISWA</span>
+        </a>
+    </div>
+</div>
+<div class="ui main container" style="margin-top:100px !important;">
+    <div class="ui center aligned segment">
+        <h1 class="" style="font-size:7em; font-family: 'Rajdhani', sans-serif; color:#444422;"><strong>4 0 4</strong>
+        </h1>
+        <h2 class="" style="font-size:4em; font-family: 'Exo', sans-serif; color: #e67300;">Oops! That page can&rsquo;t
+            be found</h2>
+        <h2 class="" style="font-size:2em; font-family: 'Exo', sans-serif;">Page not found on server, Please enter a
+            correct URL</h2>
+    </div>
+
+</div>
+</body>
+</html>
